@@ -26,8 +26,18 @@ class Game {
     ]
     this.activePhrase = null
   }
-  handleInteraction(index) {
-    this.activePhrase.checkLetter(index)
+  handleInteraction(letter) {
+    const isMatch = this.activePhrase.checkLetter(letter)
+
+    if (isMatch) {
+      this.activePhrase.showMatchedLetter(letter)
+      const hasWon = this.checkForWin()
+      if (hasWon) {
+        this.gameOver('won')
+      }
+    } else {
+      this.removeLife()
+    }
   }
   /*
    * Selects random phrase from phrases property
@@ -51,46 +61,37 @@ class Game {
   /*
    * Displays game over message
    */
-  gameOver(gameStatus) {
-    if (gameStatus === 'won') {
-      this.lostMessageDisplayed = false
-      gameOverMessage.append(wonMessage)
-      document.querySelector('#overlay').style.display = 'block'
-      document.querySelector('#overlay').classList.add('win')
-    } else if (gameStatus === 'lost' && !this.lostMessageDisplayed) {
-      gameOverMessage.append(lostMessage)
-      document.querySelector('#overlay').style.display = 'block'
-      document.querySelector('#overlay').classList.add('lose')
-      this.lostMessageDisplayed = true
-    }
+  gameOver(outcome) {
+    const overlay = document.getElementById('overlay')
+    overlay.style.display = 'block'
+    overlay.classList.add(outcome === 'won' ? 'win' : 'lose')
+    document.getElementById('game-over-message').textContent =
+      outcome === 'won'
+        ? 'Congratulations, You Won!'
+        : 'Sorry, You Lost. Try Again!'
   }
 
   /*
    * Checks for winning move
    */
   checkForWin() {
-    if (
-      this.missed === 5 ||
-      document.querySelectorAll('.letter.show').length ===
-        document.querySelectorAll('.letter').length
-    ) {
-      setTimeout(() => this.gameOver(this.missed === 5 ? 'lost' : 'won'), 500)
-    }
+    const allLetters = document.querySelectorAll('.letter')
+    const revealedLetters = document.querySelectorAll('.letter.show')
+
+    return allLetters.length === revealedLetters.length
   }
 
   /*
    * Removes a life from the scoreboard
    * Checks if player has remaining lives
    */
-  removeALife() {
-    if (this.missed < lives.length) {
-      //  change liveHeart.png to lostHeart.png
+  removeLife() {
+    if (this.missed < 5) {
       lives[this.missed].src = 'images/lostHeart.png'
       this.missed++
     }
-    // Additional logic if needed when all lives are depleted
-    if (this.missed === lives.length) {
-      // Handle game over logic
+
+    if (this.missed === 5) {
       this.gameOver('lost')
     }
   }
