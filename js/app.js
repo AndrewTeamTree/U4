@@ -6,11 +6,11 @@
 button and onscreen keyboard buttons*/
 
 document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById('qwerty').addEventListener('click', (event) => {
-		const clickedElement = event.target
-		if (clickedElement.classList.contains('key')) {
-			const clickedLetter = clickedElement.textContent
-			game.handleInteraction(clickedLetter)
-		}
-	})
+  document.getElementById('qwerty').addEventListener('click', (event) => {
+    const clickedElement = event.target
+    if (clickedElement.classList.contains('key')) {
+      const clickedLetter = clickedElement.textContent
+      game.handleInteraction(clickedLetter)
+    }
+  })
 })
